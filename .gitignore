@@ -1,5 +1,0 @@
-# ignire node_modules
-node_modules/
-
-# ignore package.json & package-lock.jason
-*.json
