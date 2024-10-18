@@ -1,0 +1,41 @@
+const express = require('express');
+const path = require('path'); // Import the path module to work with file paths
+const mongoose = require('mongoose'); // Import mongoose for MongoDB connection
+
+const app = express();
+const port = 3000;
+
+// Serve static files from the 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route to serve the index.html file at /check_two
+app.get('/check_two', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// A sample route to check server connection
+app.get('/check', (req, res) => {
+    res.send('Sample text to check connection');
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server listening at port: ${port}`);
+});
+
+// MongoDB Connection using Mongoose
+async function main() {
+  try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/project_1', {
+      useNewUrlParser: true, // Options to avoid deprecation warnings
+      useUnifiedTopology: true,
+    });
+    console.log("MONGO CONNECTION OPEN!");
+  } catch (err) {
+    console.log("OH NO MONGO CONNECTION ERROR!");
+    console.log(err);
+  }
+}
+
+// Call the main function to connect to the database
+main();
