@@ -29,15 +29,25 @@ form.addEventListener('submit', async function (e) {
 
 // Function to create image elements for the search results
 const makeImages = (movies) => {
-    // Clear any existing images before adding new ones
-    document.querySelectorAll('img').forEach(img => img.remove());
+    // Clear any existing images or divs before adding new ones
+    document.querySelectorAll('.movie-container').forEach(div => div.remove());
     
-    // Loop over the results and create an image for each one
+    // Loop over the results and create a div and image for each one
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
+            // Create a new div to contain the image
+            const div = document.createElement('div');
+            div.classList.add('movie-container'); // Add a class for styling if needed
+            
+            // Create the image element
             const img = document.createElement('IMG');
             img.src = result.Poster;
-            document.body.append(img);
+            
+            // Append the image to the div
+            div.appendChild(img);
+            
+            // Append the div to the body
+            document.body.append(div);
         }
     }
 }
