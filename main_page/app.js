@@ -51,10 +51,10 @@ const makeImages = (movies) => {
     // Clear any existing images or divs before adding new ones
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
     
-    // Loop over the results and create a div and image for each one
+    // Loop over the results and create a div, image, and text for each one
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
-            // Create a new div to contain the image
+            // Create a new div to contain the image and the title/year
             const div = document.createElement('div');
             div.classList.add('movie-container'); // Add a class for styling if needed
             
@@ -62,8 +62,13 @@ const makeImages = (movies) => {
             const img = document.createElement('IMG');
             img.src = result.Poster;
             
-            // Append the image to the div
+            // Create a paragraph element to hold the title and year
+            const titleText = document.createElement('p');
+            titleText.textContent = `${result.Title} (${result.Year})`; // Title (Year) format
+            
+            // Append the image and title text to the div
             div.appendChild(img);
+            div.appendChild(titleText);
             
             // Append the div to the body
             document.body.append(div);
