@@ -2,26 +2,45 @@ const form = document.querySelector('#searchForm');
 form.addEventListener('submit', async function (e) {
     e.preventDefault();
     
-    // Get the search term from the form
-    const searchTerm = form.elements.query.value;
+    // Get the search term from the form and trim any spaces
+    const searchTerm = form.elements.query.value.trim();
     
     // Define the API key and URL for the OMDb API
     const apiKey = 'acf3c869'; // Your OMDb API key
     const url = 'http://www.omdbapi.com/';
     
     // Create the configuration for the API call
-    const config = {
+    let config = {
         params: {
-            s: searchTerm,   // 's' is for searching by title
             apikey: apiKey   // Include your API key
         }
     };
+
+    // Check if the search term is a 4-digit number (year)
+    if (/^\d{4}$/.test(searchTerm)) {
+        // If it's a year, search using the 'y' parameter
+        config.params.y = searchTerm;
+        // Use a generic search term to ensure the API returns results
+        config.params.s = 'Movie'; // You can change this to any keyword (e.g., 'Film', 'Show')
+    } else {
+        // Otherwise, search by title using the 's' parameter
+        config.params.s = searchTerm;
+    }
     
     // Make the API request using Axios
-    const res = await axios.get(url, config);
-    
-    // Call the function to handle the results
-    makeImages(res.data.Search);
+    try {
+        const res = await axios.get(url, config);
+
+        // Check if there are any results
+        if (res.data.Response === 'True') {
+            makeImages(res.data.Search);
+        } else {
+            alert('No results found');
+        }
+    } catch (err) {
+        console.error("Error fetching data from OMDb API:", err);
+        alert('Error fetching data. Please try again later.');
+    }
     
     // Clear the search input
     form.elements.query.value = '';
