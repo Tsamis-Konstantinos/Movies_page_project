@@ -1,10 +1,7 @@
 const form = document.querySelector('#searchForm');
-form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    
-    // Get the search term from the form and trim any spaces
-    const searchTerm = form.elements.query.value.trim();
-    
+
+// Function to perform the search
+const searchMovies = async (searchTerm) => {
     // Define the API key and URL for the OMDb API
     const apiKey = 'acf3c869'; // Your OMDb API key
     const url = 'http://www.omdbapi.com/';
@@ -20,8 +17,7 @@ form.addEventListener('submit', async function (e) {
     if (/^\d{4}$/.test(searchTerm)) {
         // If it's a year, search using the 'y' parameter
         config.params.y = searchTerm;
-        // Use a generic search term to ensure the API returns results
-        config.params.s = 'Movie'; // You can change this to any keyword (e.g., 'Film', 'Show')
+        config.params.s = 'Movie'; // A general keyword to ensure results are returned
     } else {
         // Otherwise, search by title using the 's' parameter
         config.params.s = searchTerm;
@@ -41,9 +37,25 @@ form.addEventListener('submit', async function (e) {
         console.error("Error fetching data from OMDb API:", err);
         alert('Error fetching data. Please try again later.');
     }
+}
+
+// Listen for the form submission
+form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    
+    // Get the search term from the form
+    const searchTerm = form.elements.query.value.trim();
+    
+    // Call the search function
+    searchMovies(searchTerm);
     
     // Clear the search input
     form.elements.query.value = '';
+});
+
+// Perform a search for "2024" when the page loads
+window.addEventListener('DOMContentLoaded', function () {
+    searchMovies('2024'); // Automatically search for 2024 on page load
 });
 
 // Function to create image elements for the search results
