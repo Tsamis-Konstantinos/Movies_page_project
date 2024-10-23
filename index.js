@@ -8,8 +8,8 @@ const port = 3000;
 // Serve static files from the 'main_page' folder
 app.use(express.static(path.join(__dirname, 'main_page')));
 
-// Route to serve the index.html file at /check_two
-app.get('/check_two', (req, res) => {
+// Route to serve the index.html file at /main_page
+app.get('/main_page', (req, res) => {
     res.sendFile(path.join(__dirname, 'main_page', 'index.html'));
 });
 
