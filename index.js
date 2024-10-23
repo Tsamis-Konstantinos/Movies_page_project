@@ -5,12 +5,12 @@ const mongoose = require('mongoose'); // Import mongoose for MongoDB connection
 const app = express();
 const port = 3000;
 
-// Serve static files from the 'main_page' folder
-app.use(express.static(path.join(__dirname, 'main_page')));
+// Serve static files from the 'pages' folder
+app.use(express.static(path.join(__dirname, 'pages')));
 
 // Route to serve the index.html file at /main_page
 app.get('/main_page', (req, res) => {
-    res.sendFile(path.join(__dirname, 'main_page', 'index.html'));
+  res.sendFile(path.join(__dirname, 'pages', 'main_page', 'index.html'));
 });
 
 // A sample route to check server connection
