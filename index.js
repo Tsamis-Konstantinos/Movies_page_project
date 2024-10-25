@@ -37,3 +37,24 @@ async function main() {
 }
 
 main();
+
+const User = require('./models/User'); // Import the User model
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: true })); // Parse form data
+app.use(express.json()); // Parse JSON
+
+app.post('/signup', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    
+    // Create a new user document with the form data
+    const user = new User({ username, email, password });
+    await user.save(); // Save user to MongoDB
+    
+    res.send("User registered successfully!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving user data.");
+  }
+});
