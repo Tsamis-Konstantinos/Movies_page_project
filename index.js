@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path'); // Import the path module to work with file paths
-const mongoose = require('mongoose'); // Import mongoose for MongoDB connection
+const mongoose = require('mongoose');
 
 const app = express();
 const port = 3000;
@@ -13,7 +13,6 @@ app.get('/main_page', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'main_page', 'index.html'));
 });
 
-// A sample route to check server connection
 app.get('/check', (req, res) => {
     res.send('Sample text to check connection');
 });
@@ -37,5 +36,4 @@ async function main() {
   }
 }
 
-// Call the main function to connect to the database
 main();

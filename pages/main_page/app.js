@@ -2,14 +2,13 @@ const form = document.querySelector('#searchForm');
 
 // Function to perform the search
 const searchMovies = async (searchTerm) => {
-    // Define the API key and URL for the OMDb API
-    const apiKey = 'acf3c869'; // Your OMDb API key
+    const apiKey = 'acf3c869';
     const url = 'http://www.omdbapi.com/';
     
     // Create the configuration for the API call
     let config = {
         params: {
-            apikey: apiKey   // Include your API key
+            apikey: apiKey
         }
     };
 
@@ -27,7 +26,6 @@ const searchMovies = async (searchTerm) => {
     try {
         const res = await axios.get(url, config);
 
-        // Check if there are any results
         if (res.data.Response === 'True') {
             makeImages(res.data.Search);
         } else {
@@ -39,7 +37,6 @@ const searchMovies = async (searchTerm) => {
     }
 }
 
-// Listen for the form submission
 form.addEventListener('submit', function (e) {
     e.preventDefault();
     
@@ -49,36 +46,25 @@ form.addEventListener('submit', function (e) {
     // Call the search function
     searchMovies(searchTerm);
     
-    // Clear the search input
     form.elements.query.value = '';
 });
 
-// Perform a search for "2024" when the page loads
+// Perform a search for "2024" when the page loads for a default layout
 window.addEventListener('DOMContentLoaded', function () {
     searchMovies('2024'); // Automatically search for 2024 on page load
 });
 
 // Function to create image elements for the search results
 const makeImages = (movies) => {
-    // Clear any existing images or divs before adding new ones
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
-    
-    // Loop over the results and create a div, image, and text for each one
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
-            // Create a new div to contain the image and the title/year
             const div = document.createElement('div');
-            div.classList.add('movie-container'); // Add a class for styling if needed
-            
-            // Create the image element
+            div.classList.add('movie-container'); // Add a class for styling
             const img = document.createElement('IMG');
             img.src = result.Poster;
-            
-            // Create a paragraph element to hold the title and year
             const titleText = document.createElement('p');
-            titleText.textContent = `${result.Title} (${result.Year})`; // Title (Year) format
-            
-            // Append the image and title text to the div
+            titleText.textContent = `${result.Title} (${result.Year})`; // Format: Title (Year)
             div.appendChild(img);
             div.appendChild(titleText);
             
