@@ -44,6 +44,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true })); // Parse form data
 app.use(express.json()); // Parse JSON
 
+// Sign up process
 app.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -52,7 +53,7 @@ app.post('/signup', async (req, res) => {
     const user = new User({ username, email, password });
     await user.save(); // Save user to MongoDB
     
-    res.send("User registered successfully!");
+    res.redirect('http://localhost:3000/login/');
   } catch (err) {
     console.error(err);
     res.status(500).send("Error saving user data.");
