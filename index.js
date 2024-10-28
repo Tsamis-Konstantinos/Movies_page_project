@@ -58,3 +58,24 @@ app.post('/signup', async (req, res) => {
     res.status(500).send("Error saving user data.");
   }
 });
+
+// login process
+app.post('/login-process', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).send('Invalid credentials');
+    }
+    if (password) {
+      res.redirect('http://localhost:3000/main_page/');
+    } else {
+      res.status(400).send('Invalid credentials');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
