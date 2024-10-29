@@ -1,31 +1,66 @@
 const form = document.querySelector('#searchForm');
+const userButton = document.getElementById('userButton');
+
+// Function to fetch the username and update the button display and functionality
+const updateUserButton = async () => {
+    try {
+        const res = await axios.get('/get-username'); 
+        if (res.data.username) {
+            // User is logged in, display username and ↪EXIT symbol
+            userButton.innerHTML = `${res.data.username}  ↪EXIT`;
+            userButton.onclick = logoutUser; 
+        } else {
+            // User is not logged in, display "Login"
+            userButton.innerHTML = "Login";
+            userButton.onclick = () => window.location.href = '/login'; // Redirect to login page
+        }
+    } catch (error) {
+        console.error("Error fetching username:", error);
+    }
+};
+
+// Function to log the user out
+const logoutUser = async () => {
+    try {
+        await axios.post('/logout'); // Make sure your server has this route implemented
+        window.location.reload(); // Reload the page to reflect the logged-out state
+    } catch (error) {
+        console.error("Error logging out:", error);
+    }
+};
+
+// Load the username or set login button on page load
+window.addEventListener('DOMContentLoaded', function () {
+    updateUserButton(); // Check login state and update user button
+    searchMovies('2024'); // Perform an initial search for movies
+});
+
+form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const searchTerm = form.elements.query.value.trim();
+    searchMovies(searchTerm);
+    form.elements.query.value = '';
+});
+
 
 // Function to perform the search
 const searchMovies = async (searchTerm) => {
     const apiKey = 'acf3c869';
     const url = 'http://www.omdbapi.com/';
     
-    // Create the configuration for the API call
     let config = {
-        params: {
-            apikey: apiKey
-        }
+        params: { apikey: apiKey }
     };
 
-    // Check if the search term is a 4-digit number (year)
     if (/^\d{4}$/.test(searchTerm)) {
-        // If it's a year, search using the 'y' parameter
         config.params.y = searchTerm;
-        config.params.s = 'Movie'; // A general keyword to ensure results are returned
+        config.params.s = 'Movie';
     } else {
-        // Otherwise, search by title using the 's' parameter
         config.params.s = searchTerm;
     }
     
-    // Make the API request using Axios
     try {
         const res = await axios.get(url, config);
-
         if (res.data.Response === 'True') {
             makeImages(res.data.Search);
         } else {
@@ -39,36 +74,28 @@ const searchMovies = async (searchTerm) => {
 
 form.addEventListener('submit', function (e) {
     e.preventDefault();
-    
-    // Get the search term from the form
     const searchTerm = form.elements.query.value.trim();
-    
-    // Call the search function
     searchMovies(searchTerm);
-    
     form.elements.query.value = '';
 });
 
-// Perform a search for "2024" when the page loads for a default layout
 window.addEventListener('DOMContentLoaded', function () {
-    searchMovies('2024'); // Automatically search for 2024 on page load
+    loadUsername(); // Load username on page load
+    searchMovies('2024');
 });
 
-// Function to create image elements for the search results
 const makeImages = (movies) => {
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
             const div = document.createElement('div');
-            div.classList.add('movie-container'); // Add a class for styling
+            div.classList.add('movie-container');
             const img = document.createElement('IMG');
             img.src = result.Poster;
             const titleText = document.createElement('p');
-            titleText.textContent = `${result.Title} (${result.Year})`; // Format: Title (Year)
+            titleText.textContent = `${result.Title} (${result.Year})`;
             div.appendChild(img);
             div.appendChild(titleText);
-            
-            // Append the div to the body
             document.body.append(div);
         }
     }

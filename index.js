@@ -70,8 +70,9 @@ app.post('/login-process', async (req, res) => {
       return res.status(400).send('Invalid credentials');
     }
 
-    // Set session for logged-in state
-    req.session.userId = user._id; // Storing user ID in session
+    // Store user ID and username in session
+    req.session.userId = user._id;
+    req.session.username = user.username;
 
     // Redirect to main page after successful login
     res.redirect('/main_page');
@@ -81,12 +82,35 @@ app.post('/login-process', async (req, res) => {
   }
 });
 
-// Route to serve the main page, accessible only if logged in
-app.get('/main_page', (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login'); // Redirect to login if not authenticated
+// Add a route for logging out
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send("Logout failed");
+    }
+    res.redirect('/login'); // Redirect to login page after logout
+  });
+});
+
+// Route to get username
+app.get('/get-username', (req, res) => {
+  if (req.session.username) {
+    res.json({ username: req.session.username });
+  } else {
+    res.json({ username: null });
   }
-  res.sendFile(path.join(__dirname, 'pages', 'main_page', 'index.html'));
+});
+
+// Logout route to clear the session
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+      if (err) {
+          console.error("Error logging out:", err);
+          return res.status(500).send("Error logging out");
+      }
+      res.clearCookie('connect.sid'); // Clear session cookie
+      res.sendStatus(200); // Indicate success
+  });
 });
 
 // Start server

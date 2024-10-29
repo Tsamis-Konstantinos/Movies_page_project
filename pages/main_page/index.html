@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Search</title>
-
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 </head>
-
 <body>
     <h1>Movie Search</h1>
     <div class="navbar">
-        <a href="http://localhost:3000/main_page/">Home Page</a>
-        <a href="library url">Liked Movies</a>
-        <a href="friends url">Friends</a>
+        <a href="/main_page">Home Page</a>
+        <a href="library_url">Liked Movies</a>
+        <a href="friends_url">Friends</a>
         <form id="searchForm">
             <input type="text" placeholder="Search Title/Year" name="query">
             <button>Search</button>
         </form>
-        <button><a href="http://localhost:3000/login/" class="button">Login</a></button>
+        <button id="userButton"></button>
     </div>
-    
     <script src="app.js"></script>
 </body>
-
 </html>
