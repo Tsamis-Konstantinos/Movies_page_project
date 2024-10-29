@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    </head>
+</head>
 <body>
 
     <div class="login-container">
         <h2>Login</h2>
-        <form action="http://localhost:3000/login-process" method="post">
+        <form action="/login-process" method="post">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter username" required>
             
@@ -22,8 +22,9 @@
             <input type="checkbox" id="show_password" onclick="togglePasswordVisibility()">
             <label for="show_password">Show Password</label>
         </div>
-        <p>Don't have an account? <a href="http://localhost:3000/sign_up/">Sign up</a></p>
+        <p>Don't have an account? <a href="/sign_up">Sign up</a></p>
     </div>
+    
     <script src="app.js"></script>
 
 </body>
