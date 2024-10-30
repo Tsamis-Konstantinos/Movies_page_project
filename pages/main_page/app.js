@@ -94,8 +94,14 @@ const makeImages = (movies) => {
             img.src = result.Poster;
             const titleText = document.createElement('p');
             titleText.textContent = `${result.Title} (${result.Year})`;
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.classList.add('like-checkbox');
+
             div.appendChild(img);
             div.appendChild(titleText);
+            div.appendChild(checkbox);
+
             document.body.append(div);
         }
     }
