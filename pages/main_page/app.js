@@ -119,17 +119,6 @@ const makeImages = async (movies) => {
             checkbox.type = 'checkbox';
             checkbox.classList.add('like-checkbox');
 
-            // Create plot div (hidden initially)
-            const plotDiv = document.createElement('div');
-            plotDiv.classList.add('plot');
-            plotDiv.textContent = 'Loading plot...';
-            div.appendChild(plotDiv);
-
-            // Fetch plot on hover
-            div.addEventListener('mouseenter', async () => {
-                plotDiv.textContent = await fetchPlot(result.imdbID);
-            });
-
             // Hide plot on mouse leave
             div.addEventListener('mouseleave', () => {
                 plotDiv.textContent = '';
@@ -137,7 +126,20 @@ const makeImages = async (movies) => {
 
             div.appendChild(img);
             div.appendChild(titleText);
+
+            // Create plot div (hidden initially)
+            const plotDiv = document.createElement('div');
+            plotDiv.classList.add('plot');
+            plotDiv.textContent = ' ';
+            div.appendChild(plotDiv);
+
+            // Fetch plot on hover
+            div.addEventListener('mouseenter', async () => {
+                plotDiv.textContent = await fetchPlot(result.imdbID);
+            });
+
             div.appendChild(checkbox);
+
             document.body.append(div);
         }
     }
