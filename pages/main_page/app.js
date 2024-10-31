@@ -1,5 +1,7 @@
 const form = document.querySelector('#searchForm');
 const userButton = document.getElementById('userButton');
+const libraryButton = document.getElementById('libraryButton');
+const friendsButton = document.getElementById('friendsButton');
 
 // Function to fetch the username and update the button display and functionality
 const updateUserButton = async () => {
@@ -19,6 +21,32 @@ const updateUserButton = async () => {
     }
 };
 
+const updateLibraryButton = async () => {
+    try {
+        const res = await axios.get('/get-username'); 
+        if (res.data.username) {
+            libraryButton.onclick = () => window.location.href = '/library';
+        } else {
+            libraryButton.onclick = () => window.location.href = '/login';
+        }
+    } catch (error) {
+        console.error("Error fetching username:", error);
+    }
+};
+
+const updateFriendsButton = async () => {
+    try {
+        const res = await axios.get('/get-username'); 
+        if (res.data.username) {
+            friendsButton.onclick = () => window.location.href = '/friends';
+        } else {
+            friendsButton.onclick = () => window.location.href = '/login';
+        }
+    } catch (error) {
+        console.error("Error fetching username:", error);
+    }
+};
+
 // Function to log the user out
 const logoutUser = async () => {
     try {
@@ -32,6 +60,8 @@ const logoutUser = async () => {
 // Load the username or set login button on page load
 window.addEventListener('DOMContentLoaded', function () {
     updateUserButton(); // Check login state and update user button
+    updateLibraryButton();
+    updateFriendsButton();
     searchMovies('2024'); // Perform an initial search for movies
 });
 
