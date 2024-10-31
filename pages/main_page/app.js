@@ -42,7 +42,6 @@ form.addEventListener('submit', function (e) {
     form.elements.query.value = '';
 });
 
-
 // Function to perform the search
 const searchMovies = async (searchTerm) => {
     const apiKey = 'acf3c869';
@@ -61,7 +60,9 @@ const searchMovies = async (searchTerm) => {
     
     try {
         const res = await axios.get(url, config);
-        if (res.data.Response === 'True') {
+        
+        // Check if search results exist
+        if (res.data.Search && res.data.Search.length > 0) {
             makeImages(res.data.Search);
         } else {
             alert('No results found');
@@ -70,22 +71,12 @@ const searchMovies = async (searchTerm) => {
         console.error("Error fetching data from OMDb API:", err);
         alert('Error fetching data. Please try again later.');
     }
-}
+};
 
-form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const searchTerm = form.elements.query.value.trim();
-    searchMovies(searchTerm);
-    form.elements.query.value = '';
-});
-
-window.addEventListener('DOMContentLoaded', function () {
-    loadUsername(); // Load username on page load
-    searchMovies('2024');
-});
-
-const makeImages = (movies) => {
+// Function to create movie divs with hover plot display
+const makeImages = async (movies) => {
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
+
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
             const div = document.createElement('div');
@@ -98,11 +89,39 @@ const makeImages = (movies) => {
             checkbox.type = 'checkbox';
             checkbox.classList.add('like-checkbox');
 
+            // Create plot div (hidden initially)
+            const plotDiv = document.createElement('div');
+            plotDiv.classList.add('plot');
+            plotDiv.textContent = 'Loading plot...';
+            div.appendChild(plotDiv);
+
+            // Fetch plot on hover
+            div.addEventListener('mouseenter', async () => {
+                plotDiv.textContent = await fetchPlot(result.imdbID);
+            });
+
+            // Hide plot on mouse leave
+            div.addEventListener('mouseleave', () => {
+                plotDiv.textContent = '';
+            });
+
             div.appendChild(img);
             div.appendChild(titleText);
             div.appendChild(checkbox);
-
             document.body.append(div);
         }
     }
-}
+};
+
+// Function to fetch short plot for a movie
+const fetchPlot = async (movieId) => {
+    const apiKey = 'acf3c869';
+    const url = `http://www.omdbapi.com/?i=${movieId}&apikey=${apiKey}&plot=short`;
+    try {
+        const res = await axios.get(url);
+        return res.data.Plot || "Plot not available.";
+    } catch (err) {
+        console.error("Error fetching plot:", err);
+        return "Error fetching plot.";
+    }
+};
