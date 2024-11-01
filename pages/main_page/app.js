@@ -2,6 +2,7 @@ const form = document.querySelector('#searchForm');
 const userButton = document.getElementById('userButton');
 const libraryButton = document.getElementById('libraryButton');
 const friendsButton = document.getElementById('friendsButton');
+const apiKey = 'acf3c869';
 
 // Function to fetch the username and update the button display and functionality
 const updateUserButton = async () => {
@@ -9,7 +10,7 @@ const updateUserButton = async () => {
         const res = await axios.get('/get-username'); 
         if (res.data.username) {
             // User is logged in, display username and ↪EXIT symbol
-            userButton.innerHTML = `${res.data.username}  ↪EXIT`;
+            userButton.innerHTML = `${res.data.username}  ↪EXIT;`
             userButton.onclick = logoutUser; 
         } else {
             // User is not logged in, display "Login"
@@ -74,7 +75,6 @@ form.addEventListener('submit', function (e) {
 
 // Function to perform the search
 const searchMovies = async (searchTerm) => {
-    const apiKey = 'acf3c869';
     const url = 'http://www.omdbapi.com/';
     
     let config = {
@@ -105,49 +105,92 @@ const searchMovies = async (searchTerm) => {
 
 // Function to create movie divs with hover plot display
 const makeImages = async (movies) => {
+    // Clear previous movie containers
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
 
     for (let result of movies) {
         if (result.Poster !== 'N/A') {
             const div = document.createElement('div');
             div.classList.add('movie-container');
+            
             const img = document.createElement('IMG');
             img.src = result.Poster;
+
             const titleText = document.createElement('p');
             titleText.textContent = `${result.Title} (${result.Year})`;
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.classList.add('like-checkbox');
 
-            // Hide plot on mouse leave
-            div.addEventListener('mouseleave', () => {
-                plotDiv.textContent = '';
-            });
+            const movieButton = document.createElement('button');
+            const movieImdbId = result.imdbID;
 
+            // Function to set button state based on login status and movie save status
+            const setButtonState = async () => {
+                try {
+                    const res = await axios.get('/get-username');
+                    if (res.data.username) {
+                        // Check if the movie is already saved in the user's favorites
+                        const userRes = await axios.get('/get-user-movies');
+                        const isMovieLiked = userRes.data.movies.includes(movieImdbId);
+
+                        // Set the button text and functionality based on the movie's like status
+                        movieButton.textContent = isMovieLiked ? 'Liked' : 'Like';
+                        movieButton.onclick = async () => {
+                            try {
+                                if (isMovieLiked) {
+                                    // Remove movie ID from user's favorites
+                                    await axios.post('/remove-movie', { movieId: movieImdbId });
+                                    movieButton.textContent = 'Like'; // Toggle back to "Like"
+                                } else {
+                                    // Add movie ID to user's favorites
+                                    await axios.post('/save-movie', { movieId: movieImdbId });
+                                    movieButton.textContent = 'Liked'; // Toggle to "Liked"
+                                }
+                                // Refresh the button state after toggling
+                                setButtonState();
+                            } catch (error) {
+                                console.error("Error toggling movie like state:", error);
+                            }
+                        };
+                    } else {
+                        movieButton.textContent = 'Like';
+                        movieButton.onclick = () => window.location.href = '/login';
+                    }
+                } catch (error) {
+                    console.error("Error setting button state:", error);
+                }
+            };
+
+            // Set initial button state
+            setButtonState();
+
+            // Append elements to the movie container div
             div.appendChild(img);
             div.appendChild(titleText);
+            div.appendChild(movieButton);
 
-            // Create plot div (hidden initially)
+            // Create and append plot div (hidden initially)
             const plotDiv = document.createElement('div');
             plotDiv.classList.add('plot');
-            plotDiv.textContent = ' ';
             div.appendChild(plotDiv);
 
-            // Fetch plot on hover
+            // Fetch and display plot on hover
             div.addEventListener('mouseenter', async () => {
                 plotDiv.textContent = await fetchPlot(result.imdbID);
             });
 
-            div.appendChild(checkbox);
+            div.addEventListener('mouseleave', () => {
+                plotDiv.textContent = '';
+            });
 
+            // Add movie container div to the document body
             document.body.append(div);
         }
     }
 };
 
+
+
 // Function to fetch short plot for a movie
 const fetchPlot = async (movieId) => {
-    const apiKey = 'acf3c869';
     const url = `http://www.omdbapi.com/?i=${movieId}&apikey=${apiKey}&plot=short`;
     try {
         const res = await axios.get(url);

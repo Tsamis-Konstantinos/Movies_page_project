@@ -113,6 +113,75 @@ app.post('/logout', (req, res) => {
   });
 });
 
+// Route to save a movie to the user's list of favorites
+app.post('/save-movie', async (req, res) => {
+  if (!req.session.username) {
+    // If the user is not authenticated, send an unauthorized status
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  const { movieId } = req.body;
+
+  try {
+    // Find the user by the session username
+    const user = await User.findOne({ username: req.session.username });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Add the movie ID to the user's movieID array if it's not already there
+    if (!user.movieID.includes(movieId)) {
+      user.movieID.push(movieId);
+      await user.save();
+      return res.status(200).send({ message: "Movie saved successfully" });
+    } else {
+      return res.status(200).send({ message: "Movie already in library" });
+    }
+  } catch (error) {
+    console.error("Error saving movie:", error);
+    res.status(500).send({ message: "Error saving movie" });
+  }
+});
+
+// Route to get user's saved movies
+app.get('/get-user-movies', async (req, res) => {
+  if (!req.session.username) {
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  try {
+    const user = await User.findOne({ username: req.session.username });
+    res.status(200).send({ movies: user.movieID });
+  } catch (error) {
+    console.error("Error fetching user movies:", error);
+    res.status(500).send({ message: "Error fetching movies" });
+  }
+});
+
+// Route to remove a movie from user's favorites
+app.post('/remove-movie', async (req, res) => {
+  if (!req.session.username) {
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  const { movieId } = req.body;
+
+  try {
+    const user = await User.findOne({ username: req.session.username });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Remove the movie ID if it exists in the user's list
+    user.movieID = user.movieID.filter(id => id !== movieId);
+    await user.save();
+    res.status(200).send({ message: "Movie removed successfully" });
+  } catch (error) {
+    console.error("Error removing movie:", error);
+    res.status(500).send({ message: "Error removing movie" });
+  }
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`Server listening at port: ${port}`);
