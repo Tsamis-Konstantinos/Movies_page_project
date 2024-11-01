@@ -149,7 +149,7 @@ app.post('/save-movie', async (req, res) => {
   }
 });
 
-// Route to get user's saved movies
+// Route to get user's saved movies for main page
 app.get('/get-user-movies', async (req, res) => {
   if (!req.session.username) {
     return res.status(401).send({ message: "Unauthorized" });
@@ -161,6 +161,51 @@ app.get('/get-user-movies', async (req, res) => {
   } catch (error) {
     console.error("Error fetching user movies:", error);
     res.status(500).send({ message: "Error fetching movies" });
+  }
+});
+
+// Route to get user's saved movies for library
+app.get('/saved-movies', async (req, res) => {
+  if (!req.session.userId) {
+      return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+          return res.status(404).send({ message: "User not found" });
+      }
+
+      // Assuming movieID stores the IMDb IDs of the saved movies
+      res.json({ movies: user.movieID });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: "Server error" });
+  }
+});
+
+// Route to remove a movie from the user's saved list
+app.post('/remove-movie', async (req, res) => {
+  if (!req.session.userId) {
+      return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  const { movieId } = req.body; // Get movieId from request body
+
+  try {
+      const user = await User.findById(req.session.userId);
+      if (!user) {
+          return res.status(404).send({ message: "User not found" });
+      }
+
+      // Remove the movieId from user's saved movies
+      user.movieID.pull(movieId); // Use mongoose's pull method
+      await user.save();
+
+      res.send({ message: "Movie removed successfully" });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: "Server error" });
   }
 });
 

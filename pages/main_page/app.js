@@ -137,7 +137,7 @@ const makeImages = async (movies) => {
                             try {
                                 if (isMovieLiked) {
                                     // Remove movie ID from user's favorites
-                                    await axios.post('/remove-movie', { movieId: movieImdbId });
+                                await axios.post('/remove-movie', { movieId: movieImdbId });
                                     movieButton.textContent = 'Like'; // Toggle back to "Like"
                                 } else {
                                     // Add movie ID to user's favorites
@@ -186,8 +186,6 @@ const makeImages = async (movies) => {
         }
     }
 };
-
-
 
 // Function to fetch short plot for a movie
 const fetchPlot = async (movieId) => {
