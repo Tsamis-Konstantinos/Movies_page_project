@@ -40,14 +40,20 @@ app.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
+    // Check if a user with the same username or email already exists
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+        return res.status(400).send("Username or email already exists.");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     res.redirect('/login'); // Redirect to login after successful signup
-  } catch (err) {
+} catch (err) {
     console.error(err);
     res.status(500).send("Error saving user data.");
-  }
+}
 });
 
 // Route to serve the login page

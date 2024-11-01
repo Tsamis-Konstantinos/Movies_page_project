@@ -1,4 +1,4 @@
-function validateForm(event) {
+async function validateForm(event) {
     event.preventDefault(); // Prevent the form from submitting immediately
 
     const email = document.getElementById('email').value;
@@ -22,9 +22,27 @@ function validateForm(event) {
         return;
     }
 
-    // If all validations pass, submit the form
-    document.querySelector('form').submit();
+    // Create a user object to send to the server
+    const userData = {
+        username,
+        email,
+        password
+    };
+
+    try {
+        // Submit the form data via POST request to the server
+        const response = await axios.post('/signup', userData);
+        // Redirect to login if successful
+        window.location.href = response.data.redirectUrl; // Adjust based on your response structure
+    } catch (error) {
+        if (error.response) {
+            alert(error.response.data); // Display server error message
+        } else {
+            alert("An error occurred. Please try again.");
+        }
+    }
 }
+
 
 function togglePasswordVisibility() {
     const passwordField = document.getElementById('password');
