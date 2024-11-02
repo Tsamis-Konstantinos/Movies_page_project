@@ -50,10 +50,10 @@ app.post('/signup', async (req, res) => {
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     res.redirect('/login'); // Redirect to login after successful signup
-} catch (err) {
+  } catch (err) {
     console.error(err);
     res.status(500).send("Error saving user data.");
-}
+  }
 });
 
 // Route to serve the login page
@@ -88,7 +88,7 @@ app.post('/login-process', async (req, res) => {
   }
 });
 
-// Add a route for logging out
+// Route for logging out
 app.get('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
@@ -122,14 +122,12 @@ app.post('/logout', (req, res) => {
 // Route to save a movie to the user's list of favorites
 app.post('/save-movie', async (req, res) => {
   if (!req.session.username) {
-    // If the user is not authenticated, send an unauthorized status
     return res.status(401).send({ message: "Unauthorized" });
   }
 
   const { movieId } = req.body;
 
   try {
-    // Find the user by the session username
     const user = await User.findOne({ username: req.session.username });
     if (!user) {
       return res.status(404).send({ message: "User not found" });
@@ -167,69 +165,98 @@ app.get('/get-user-movies', async (req, res) => {
 // Route to get user's saved movies for library
 app.get('/saved-movies', async (req, res) => {
   if (!req.session.userId) {
-      return res.status(401).send({ message: "Unauthorized" });
+    return res.status(401).send({ message: "Unauthorized" });
   }
 
   try {
-      const user = await User.findById(req.session.userId);
-      if (!user) {
-          return res.status(404).send({ message: "User not found" });
-      }
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
 
-      // Assuming movieID stores the IMDb IDs of the saved movies
-      res.json({ movies: user.movieID });
+    // Assuming movieID stores the IMDb IDs of the saved movies
+    res.json({ movies: user.movieID });
   } catch (err) {
-      console.error(err);
-      res.status(500).send({ message: "Server error" });
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
   }
 });
 
 // Route to remove a movie from the user's saved list
 app.post('/remove-movie', async (req, res) => {
   if (!req.session.userId) {
-      return res.status(401).send({ message: "Unauthorized" });
-  }
-
-  const { movieId } = req.body; // Get movieId from request body
-
-  try {
-      const user = await User.findById(req.session.userId);
-      if (!user) {
-          return res.status(404).send({ message: "User not found" });
-      }
-
-      // Remove the movieId from user's saved movies
-      user.movieID.pull(movieId); // Use mongoose's pull method
-      await user.save();
-
-      res.send({ message: "Movie removed successfully" });
-  } catch (err) {
-      console.error(err);
-      res.status(500).send({ message: "Server error" });
-  }
-});
-
-// Route to remove a movie from user's favorites
-app.post('/remove-movie', async (req, res) => {
-  if (!req.session.username) {
     return res.status(401).send({ message: "Unauthorized" });
   }
 
   const { movieId } = req.body;
 
   try {
-    const user = await User.findOne({ username: req.session.username });
+    const user = await User.findById(req.session.userId);
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    // Remove the movie ID if it exists in the user's list
+    // Remove the movieId from user's saved movies
     user.movieID = user.movieID.filter(id => id !== movieId);
     await user.save();
-    res.status(200).send({ message: "Movie removed successfully" });
+
+    res.send({ message: "Movie removed successfully" });
   } catch (error) {
     console.error("Error removing movie:", error);
     res.status(500).send({ message: "Error removing movie" });
+  }
+});
+
+// Route to search for friends
+app.get('/search-friends', async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  const searchQuery = req.query.username;
+
+  try {
+    const currentUser = await User.findById(req.session.userId);
+    if (!currentUser) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    const users = await User.find({
+      username: { $regex: searchQuery, $options: 'i' },
+      _id: { $ne: currentUser._id }
+    }).select('username');
+
+    res.json(users);
+  } catch (error) {
+    console.error("Error searching friends:", error);
+    res.status(500).send({ message: "Error searching friends" });
+  }
+});
+
+// Route to add a friend to the logged-in user's friends list
+app.post('/add-friend', async (req, res) => {
+  if (!req.session.userId) {
+    return res.json({ redirect: '/login' });
+  }
+
+  const { friendUsername } = req.body;
+
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    if (!user.friends.includes(friendUsername)) {
+      user.friends.push(friendUsername);
+      await user.save();
+      return res.json({ success: true });
+    } else {
+      return res.json({ success: false, message: "Friend already added" });
+    }
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    res.status(500).send({ message: "Error adding friend" });
   }
 });
 
