@@ -7,12 +7,20 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <h1>Friends</h1>
+    <h1>Friends Page</h1>
     <button><a href="/main_page">Home Page</a></button>
     <button id="userButton"></button>
-    
+
+    <h2>Pending Requests</h2>
+    <div id="requests">
+        <h3>Sent:</h3><br>
+        <div id="sent"></div>
+        <h3>Received:</h3><br>
+        <div id="received"></div>
+    </div>
     <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Search for Friends" name="query">
+        <h2>Find new friends</h2>
+        <input type="text" id="searchInput" placeholder="Search for new friends" name="query">
         <button type="submit">Search</button>
     </form>   
 

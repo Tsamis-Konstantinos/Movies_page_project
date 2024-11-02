@@ -85,7 +85,8 @@ const addFriend = async (friendUsername) => {
             // Redirect if not logged in
             window.location.href = res.data.redirect;
         } else if (res.data.success) {
-            alert(`Added ${friendUsername} to your friends list.`);
+            alert(`User ${friendUsername} has received a friend request.`);
+            loadFriendRequests(); // Refresh friend requests
         } else {
             alert(`Failed to add ${friendUsername}.`);
         }
@@ -94,3 +95,126 @@ const addFriend = async (friendUsername) => {
         alert("Error adding friend.");
     }
 };
+
+// Function to load friend requests
+const loadFriendRequests = async () => {
+    try {
+        const res = await axios.get('/friend-requests');
+        const { sentRequests, receivedRequests } = res.data;
+
+        // Populate sent requests
+        const sentDiv = document.getElementById('sent');
+        sentDiv.innerHTML = sentRequests.length > 0 
+            ? sentRequests.map(username => `
+                <div>
+                    ${username} 
+                    <button onclick="removeSentRequest('${username}')">Remove</button>
+                </div>`).join('') 
+            : "No sent requests.";
+
+        // Populate received requests
+        const receivedDiv = document.getElementById('received');
+        receivedDiv.innerHTML = receivedRequests.length > 0 
+            ? receivedRequests.map(username => `
+                <div>
+                    ${username} 
+                    <button onclick="acceptFriendRequest('${username}')">Accept</button>
+                    <button onclick="removeReceivedRequest('${username}')">Remove</button>
+                </div>`).join('') 
+            : "No received requests.";
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            alert(error.response.data.message);
+            window.location.href = '/login';
+        } else {
+            console.error("Error loading friend requests:", error);
+        }
+    }
+};
+
+// Function to accept a received friend request
+async function acceptFriendRequest(username) {
+    try {
+        const response = await fetch('/accept-friend-request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            // Notify the user
+            alert(data.message); 
+            // Refresh the received requests
+            refreshReceivedRequests();
+        } else {
+            alert(data.message); // Notify the user of the error
+        }
+    } catch (error) {
+        console.error("Error accepting friend request:", error);
+    }
+}
+
+async function refreshReceivedRequests() {
+    try {
+        const response = await fetch('/friend-requests'); // Endpoint to fetch friend requests
+        const data = await response.json();
+        if (response.ok) {
+            renderReceivedRequests(data.receivedRequests); // Call the function to render received requests
+        } else {
+            console.error("Error fetching received requests:", data.message);
+        }
+    } catch (error) {
+        console.error("Error refreshing received requests:", error);
+    }
+}
+
+function renderReceivedRequests(receivedRequests) {
+    const receivedDiv = document.getElementById("received");
+    receivedDiv.innerHTML = ""; // Clear existing content
+
+    receivedRequests.forEach(username => {
+        const userDiv = document.createElement("div");
+        userDiv.innerHTML = `
+            <span>${username}</span>
+            <button onclick="acceptFriendRequest('${username}')">Accept</button>
+            <button onclick="removeReceivedRequest('${username}')">Remove</button>
+        `;
+        receivedDiv.appendChild(userDiv);
+    });
+}
+
+// Function to remove a sent friend request
+const removeSentRequest = async (username) => {
+    try {
+        const res = await axios.post('/remove-sent-request', { username });
+        alert(res.data.message); // Display success message
+        loadFriendRequests(); // Reload friend requests to reflect changes
+    } catch (error) {
+        console.error("Error removing sent request:", error);
+        alert("Error removing sent request.");
+    }
+};
+
+// Function to remove a received friend request
+const removeReceivedRequest = async (username) => {
+    try {
+        const res = await axios.post('/remove-received-request', { username });
+        alert(res.data.message); // Display success message
+        loadFriendRequests(); // Reload friend requests to reflect changes
+    } catch (error) {
+        console.error("Error removing received request:", error);
+        alert("Error removing received request.");
+    }
+};
+
+// Load friend requests when the page is loaded
+window.onload = loadFriendRequests;
+
+// Load the username or set login button on page load
+window.addEventListener('DOMContentLoaded', function () {
+    updateUserButton(); // Check login state and update user button
+    loadFriendRequests(); // Load friend requests on page load
+});

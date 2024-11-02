@@ -242,21 +242,160 @@ app.post('/add-friend', async (req, res) => {
   const { friendUsername } = req.body;
 
   try {
+    const userB = await User.findById(req.session.userId);
+    if (!userB) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // Check if user is already in friends
+    if (userB.friends.includes(friendUsername)) {
+      // If already friends, remove from friends_requested if exists
+      userB.friends_requested = userB.friends_requested.filter(requestedUser => requestedUser !== friendUsername);
+      await userB.save();
+      return res.json({ success: false, message: `User ${friendUsername} is already your friend.` });
+    }
+
+    // Check if user has already requested the friend
+    const existingRequest = await User.findOne({ 
+      username: friendUsername, 
+      friends_requested: userB.username 
+    });
+
+    if (existingRequest) {
+      return res.json({ success: false, message: `User ${friendUsername} has already sent you a friend request.` });
+    }
+
+    // Proceed to add the friend request
+    if (!userB.friends_requested.includes(friendUsername)) {
+      userB.friends_requested.push(friendUsername);
+      await userB.save();
+      return res.json({ success: true, message: `Friend request sent to ${friendUsername}.` });
+    } else {
+      return res.json({ success: false, message: "Friend request already sent." });
+    }
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    res.status(500).send({ message: "Error adding friend" });
+  }
+});
+
+// Route to get sent and received friend requests
+app.get('/friend-requests', async (req, res) => {
+  if (!req.session.userId) {}
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Fetching friends requested and received by the user
+    const sentRequests = user.friends_requested; // Friends requested by the user
+    const receivedRequests = await User.find({
+      friends_requested: user.username // Users who have requested the logged-in user
+    }).select('username'); // Get only the username
+
+    res.json({
+      sentRequests,
+      receivedRequests: receivedRequests.map(r => r.username) // Extract usernames
+    });
+  } catch (error) {
+    console.error("Error fetching friend requests:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Route to remove a friend request from sent requests
+app.post('/remove-sent-request', async (req, res) => {
+  const { username } = req.body;
+
+  if (!req.session.userId) {
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  try {
     const user = await User.findById(req.session.userId);
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    if (!user.friends.includes(friendUsername)) {
-      user.friends.push(friendUsername);
-      await user.save();
-      return res.json({ success: true });
-    } else {
-      return res.json({ success: false, message: "Friend already added" });
-    }
+    user.friends_requested = user.friends_requested.filter(requestedUser => requestedUser !== username);
+    await user.save();
+    res.send({ message: "Friend request removed from sent requests." });
   } catch (error) {
-    console.error("Error adding friend:", error);
-    res.status(500).send({ message: "Error adding friend" });
+    console.error("Error removing sent request:", error);
+    res.status(500).send({ message: "Error removing sent request." });
+  }
+});
+
+// Route to remove a friend request from received requests
+app.post('/remove-received-request', async (req, res) => {
+  const { username } = req.body;
+
+  if (!req.session.userId) {
+    return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    // You may want to fetch the user who sent the request and remove them from their friends_requested
+    const sender = await User.findOne({ username });
+    if (!sender) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    sender.friends_requested = sender.friends_requested.filter(requestedUser => requestedUser !== user.username);
+    await sender.save();
+
+    res.send({ message: "Friend request removed from received requests." });
+  } catch (error) {
+    console.error("Error removing received request:", error);
+    res.status(500).send({ message: "Error removing received request." });
+  }
+});
+
+// Route to accept a friend request
+app.post('/accept-friend-request', async (req, res) => {
+  const { username } = req.body; // The username of the requester
+  const currentUser = req.session.username; // Get the logged-in user's username
+
+  // Ensure the user is logged in
+  if (!currentUser) {
+      return res.status(401).send({ message: "Unauthorized" });
+  }
+
+  try {
+      const currentUserDoc = await User.findOne({ username: currentUser });
+      const friendUserDoc = await User.findOne({ username });
+
+      // Check if both users exist
+      if (!currentUserDoc || !friendUserDoc) {
+          return res.status(404).json({ message: "User not found." });
+      }
+
+      // Remove the incoming request from currentUser's friends_requested
+      currentUserDoc.friends_requested = currentUserDoc.friends_requested.filter(user => user !== username);
+      
+      // Add to currentUser's friends if not already there
+      if (!currentUserDoc.friends.includes(username)) {
+        currentUserDoc.friends.push(username);
+      }
+
+      // Add currentUser to the friend's friends list if not already there
+      if (!friendUserDoc.friends.includes(currentUser)) {
+        friendUserDoc.friends.push(currentUser);
+      }
+
+      await currentUserDoc.save();
+      await friendUserDoc.save();
+
+      res.json({ message: `You and ${username} are now friends!` });
+  } catch (error) {
+      console.error("Error accepting friend request:", error);
+      res.status(500).json({ message: "Internal server error." });
   }
 });
 
