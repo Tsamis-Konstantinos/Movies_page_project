@@ -46,6 +46,12 @@ searchForm.addEventListener('submit', async (event) => {
   }
 });
 
+window.addEventListener('DOMContentLoaded', function () {
+    updateUserButton();
+    displaySentRequests();    // Display sent friend requests
+    displayReceivedRequests(); // Display received friend requests
+  });
+  
 // Listen for the search form submission
 searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -72,10 +78,61 @@ searchForm.addEventListener('submit', async (event) => {
       resultsDiv.appendChild(userDiv);
     });
   };
+ 
   
-  // Placeholder function to handle friend request (you can implement this further as needed)
-  const sendFriendRequest = (username) => {
-    console.log(`Friend request sent to ${username}`);
-    // Add your logic to handle friend requests here
+// Function to send a friend request to a user
+const sendFriendRequest = async (username) => {
+    try {
+      const res = await axios.post('/send-friend-request', { friendUsername: username });
+      alert(res.data.message); // Alert the user of the result (e.g., "Friend request sent!")
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+      alert("Error sending friend request");
+    }
+  };
+  
+// Function to fetch and display sent friend requests
+const displaySentRequests = async () => {
+    try {
+      const res = await axios.get('/friend-requests/sent');
+      const sentDiv = document.getElementById('sent');
+      sentDiv.innerHTML = ''; // Clear previous results
+  
+      res.data.sentRequests.forEach(username => {
+        const userDiv = document.createElement('div');
+        userDiv.textContent = `${username} (Friend request sent)`;
+        sentDiv.appendChild(userDiv);
+      });
+    } catch (error) {
+      console.error("Error fetching sent requests:", error);
+    }
+  };
+  
+  // Function to fetch and display received friend requests
+  const displayReceivedRequests = async () => {
+    try {
+      const res = await axios.get('/friend-requests/received');
+      const receivedDiv = document.getElementById('received');
+      receivedDiv.innerHTML = ''; // Clear previous results
+  
+      res.data.receivedRequests.forEach(username => {
+        const userDiv = document.createElement('div');
+        userDiv.innerHTML = `${username} <button onclick="acceptFriendRequest('${username}')">Accept</button>`;
+        receivedDiv.appendChild(userDiv);
+      });
+    } catch (error) {
+      console.error("Error fetching received requests:", error);
+    }
+  };
+
+// Function to accept a friend request
+const acceptFriendRequest = async (username) => {
+    try {
+      const res = await axios.post('/accept-friend-request', { friendUsername: username });
+      alert(res.data.message); // Notify the user
+      displayReceivedRequests(); // Refresh the received requests list
+    } catch (error) {
+      console.error("Error accepting friend request:", error);
+    }
   };
   

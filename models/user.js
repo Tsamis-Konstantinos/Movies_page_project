@@ -19,14 +19,8 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
-  friends_requested: {
-    type: [String],
-    default: [],
-  },
-  friends: {
-    type: [String],
-    default: [],
-  },
+  friends_requested: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Always use ObjectId references
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Reference to User IDs
 });
 
 module.exports = mongoose.model('User', userSchema);
