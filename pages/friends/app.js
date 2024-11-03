@@ -46,12 +46,36 @@ searchForm.addEventListener('submit', async (event) => {
   }
 });
 
-const displaySearchResults = (users) => {
-  const resultsDiv = document.getElementById('searchResults');
-  resultsDiv.innerHTML = '';
-  users.forEach(user => {
-    const userDiv = document.createElement('div');
-    userDiv.innerHTML = `${user.username} <button onclick="sendFriendRequest('${user.username}')">Add Friend</button>`;
-    resultsDiv.appendChild(userDiv);
+// Listen for the search form submission
+searchForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = document.getElementById('searchInput').value;
+  
+    try {
+      // Send a GET request to the search-users route
+      const res = await axios.get(`/search-users?query=${query}`);
+      const users = res.data.users;
+      displaySearchResults(users);
+    } catch (error) {
+      console.error("Error searching users:", error);
+    }
   });
-};
+  
+  // Function to display search results in the searchResults div
+  const displaySearchResults = (users) => {
+    const resultsDiv = document.getElementById('searchResults');
+    resultsDiv.innerHTML = ''; // Clear previous results
+  
+    users.forEach(user => {
+      const userDiv = document.createElement('div');
+      userDiv.innerHTML = `${user.username} <button onclick="sendFriendRequest('${user.username}')">Add Friend</button>`;
+      resultsDiv.appendChild(userDiv);
+    });
+  };
+  
+  // Placeholder function to handle friend request (you can implement this further as needed)
+  const sendFriendRequest = (username) => {
+    console.log(`Friend request sent to ${username}`);
+    // Add your logic to handle friend requests here
+  };
+  

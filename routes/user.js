@@ -23,4 +23,26 @@ router.get('/saved-movies', async (req, res) => {
   }
 });
 
+// Route to search for users by username
+router.get('/search-users', async (req, res) => {
+  const query = req.query.query;
+  const loggedInUserId = req.session.userId; // Get logged-in user's ID from session
+
+  try {
+    // Find users with usernames that match the query (case-insensitive), excluding the logged-in user
+    const users = await User.find(
+      {
+        username: new RegExp(query, 'i'),
+        _id: { $ne: loggedInUserId } // Exclude the logged-in user
+      },
+      'username' // Only return the username field
+    );
+
+    res.json({ users });
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).send({ message: "Server error" });
+  }
+});
+
 module.exports = router;
