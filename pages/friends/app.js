@@ -146,6 +146,24 @@ const displayFriends = async () => {
   }
 };
 
+// Function to fetch user's friends' usernames
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+      const response = await axios.get('/user-details');
+      const friendsUsernames = response.data.friendsUsernames;
+
+      const friendsListDiv = document.getElementById('friendsList');
+      if (friendsUsernames.length > 0) {
+          friendsListDiv.innerHTML = friendsUsernames.map(username => `<div>${username}</div>`).join('');
+      } else {
+          friendsListDiv.innerHTML = '<div>No friends added yet.</div>';
+      }
+  } catch (error) {
+      console.error('Error fetching friends usernames:', error);
+      document.getElementById('friendsList').innerHTML = '<div>Error fetching friends.</div>';
+  }
+});
+
 window.addEventListener('DOMContentLoaded', function () {
   updateUserButton();
   displayFriends();

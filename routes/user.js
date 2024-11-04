@@ -133,16 +133,18 @@ router.get('/search-users', async (req, res) => {
   }
 });
 
-// Get friends list
-router.get('/friends', async (req, res) => {
+// Get user details including friends' usernames
+router.get('/user-details', async (req, res) => {
   if (!req.session.userId) return res.status(401).send("Unauthorized");
 
   try {
-    const user = await User.findById(req.session.userId).populate('friends', 'username');
-    res.status(200).json({ friends: user.friends });
+    const user = await User.findById(req.session.userId).select('friendsUsernames');
+    if (!user) return res.status(404).send("User not found");
+
+    res.status(200).json({ friendsUsernames: user.friendsUsernames });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error fetching friends list");
+    res.status(500).send("Error fetching user details");
   }
 });
 
