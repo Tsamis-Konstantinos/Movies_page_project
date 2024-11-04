@@ -115,19 +115,6 @@ router.get('/friend-requests', async (req, res) => {
   }
 });
 
-// Get friends list
-router.get('/friends', async (req, res) => {
-  if (!req.session.userId) return res.status(401).send("Unauthorized");
-
-  try {
-    const user = await User.findById(req.session.userId).populate('friends', 'username');
-    res.status(200).json({ friends: user.friends });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching friends list");
-  }
-});
-
 // Search for users by username
 router.get('/search-users', async (req, res) => {
   if (!req.session.userId) return res.status(401).send("Unauthorized");
@@ -143,6 +130,19 @@ router.get('/search-users', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error searching for users");
+  }
+});
+
+// Get friends list
+router.get('/friends', async (req, res) => {
+  if (!req.session.userId) return res.status(401).send("Unauthorized");
+
+  try {
+    const user = await User.findById(req.session.userId).populate('friends', 'username');
+    res.status(200).json({ friends: user.friends });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching friends list");
   }
 });
 

@@ -2,6 +2,7 @@ const userButton = document.getElementById('userButton');
 const friendRequestsContainer = document.getElementById('friendRequests');
 const searchForm = document.getElementById('searchForm');
 const searchResultsContainer = document.getElementById('searchResults');
+const friendsListContainer = document.getElementById('friendsList');
 
 // Function to fetch the username and update the button display and functionality
 const updateUserButton = async () => {
@@ -46,12 +47,6 @@ searchForm.addEventListener('submit', async (event) => {
   } catch (error) {
     console.error("Error searching users:", error);
   }
-});
-
-window.addEventListener('DOMContentLoaded', function () {
-    updateUserButton();
-    displaySentRequests();    // Display sent friend requests
-    displayReceivedRequests(); // Display received friend requests
 });
   
 // Send a friend request
@@ -134,8 +129,25 @@ const displaySearchResults = (users) => {
   });
 };
 
-// Load friend requests on page load
-window.addEventListener('DOMContentLoaded', () => {
+// Function to display the friends list
+const displayFriends = async () => {
+  try {
+    const res = await axios.get('/friends-list'); // Assuming a route '/friends-list' to fetch friends
+    const friends = res.data.friends;
+
+    friendsListContainer.innerHTML = ''; // Clear previous friends list
+    friends.forEach(friend => {
+      const friendElement = document.createElement('div');
+      friendElement.textContent = friend.username;
+      friendsListContainer.appendChild(friendElement);
+    });
+  } catch (error) {
+    console.error("Error fetching friends list:", error);
+  }
+};
+
+window.addEventListener('DOMContentLoaded', function () {
   updateUserButton();
+  displayFriends();
   displayFriendRequests();
 });
