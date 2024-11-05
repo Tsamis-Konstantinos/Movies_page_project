@@ -129,23 +129,6 @@ const displaySearchResults = (users) => {
   });
 };
 
-// Function to display the friends list
-const displayFriends = async () => {
-  try {
-    const res = await axios.get('/friends-list'); // Assuming a route '/friends-list' to fetch friends
-    const friends = res.data.friends;
-
-    friendsListContainer.innerHTML = ''; // Clear previous friends list
-    friends.forEach(friend => {
-      const friendElement = document.createElement('div');
-      friendElement.textContent = friend.username;
-      friendsListContainer.appendChild(friendElement);
-    });
-  } catch (error) {
-    console.error("Error fetching friends list:", error);
-  }
-};
-
 // Function to fetch user's friends' usernames
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -154,7 +137,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const friendsListDiv = document.getElementById('friendsList');
       if (friendsUsernames.length > 0) {
-          friendsListDiv.innerHTML = friendsUsernames.map(username => `<div>${username}</div>`).join('');
+          // Use map to include "See common movies" button for each friend
+          friendsListDiv.innerHTML = friendsUsernames.map(username => `
+            <div>
+              ${username}
+              <button onclick="window.location.href='http://localhost:3000/friends/${encodeURIComponent(username)}'">
+                See common movies
+              </button>
+            </div>
+          `).join('');
       } else {
           friendsListDiv.innerHTML = '<div>No friends added yet.</div>';
       }

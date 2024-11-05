@@ -148,4 +148,24 @@ router.get('/user-details', async (req, res) => {
   }
 });
 
+// Route to get common movies between logged-in user and a friend
+router.get('/friends/:username/common-movies', async (req, res) => {
+  if (!req.session.userId) return res.status(401).send("Unauthorized");
+
+  try {
+    const currentUser = await User.findById(req.session.userId);
+    const friend = await User.findOne({ username: req.params.username });
+
+    if (!currentUser || !friend) return res.status(404).send("User not found");
+
+    // Find common movies between current user and friend
+    const commonMovies = currentUser.movieID.filter(movie => friend.movieID.includes(movie));
+
+    res.status(200).json({ commonMovies });
+  } catch (err) {
+    console.error("Error fetching common movies:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;

@@ -35,6 +35,11 @@ app.use('/', require('./routes/auth'));
 app.use('/', require('./routes/movies'));
 app.use('/', require('./routes/user'));
 
+// Serve common-movies.html for /friends/:username routes
+app.get('/friends/:username', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'friends', 'common-movies.html'));
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`Server listening at port: ${port}`);

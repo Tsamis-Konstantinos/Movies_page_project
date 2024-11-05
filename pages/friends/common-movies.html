@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Movies</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Common Movies</h1>
+    <button><a href="/friends">Back to Friends</a></button>
+    <div id="commonMoviesList"></div>
+
+    <script>
+        // Fetch and display common movies
+        document.addEventListener('DOMContentLoaded', async () => {
+            const username = window.location.pathname.split('/').pop(); // Get friend's username from URL
+
+            try {
+                const res = await axios.get(`/friends/${username}/common-movies`);
+                const commonMovies = res.data.commonMovies;
+
+                const commonMoviesListDiv = document.getElementById('commonMoviesList');
+                if (commonMovies.length > 0) {
+                    commonMoviesListDiv.innerHTML = commonMovies.map(movie => `<div>${movie}</div>`).join('');
+                } else {
+                    commonMoviesListDiv.innerHTML = '<div>No common movies found.</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching common movies:', error);
+                document.getElementById('commonMoviesList').innerHTML = '<div>Error fetching common movies.</div>';
+            }
+        });
+    </script>
+</body>
+</html>
