@@ -152,6 +152,7 @@ body {
     position: relative;
     top: 10px;
     text-align: left;
+    margin-bottom: 10px;
 }
 
 /* Show plot on hover */

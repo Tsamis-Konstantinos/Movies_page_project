@@ -16,13 +16,12 @@
             
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter password" required>
-
+            <div>
+                <input type="checkbox" id="show_password" onclick="togglePasswordVisibility()">
+                <label for="show_password">Show Password</label>
+            </div>
             <input type="submit" value="Login">
         </form>
-        <div>
-            <input type="checkbox" id="show_password" onclick="togglePasswordVisibility()">
-            <label for="show_password">Show Password</label>
-        </div>
         <p>Don't have an account? <a href="/sign_up">Sign up</a></p>
     </div>
     

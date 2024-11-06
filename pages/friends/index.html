@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
     <h1>Friends Page</h1>
@@ -14,11 +15,13 @@
     <h2>My friends</h2>
     <div id="friendsList"></div>
 
-    <h2>Find new friends</h2>
-    <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Search by username">
-        <button type="submit">Search</button>
-    </form>
+    <div id="findFriendsContainer">
+        <h2>Find new friends</h2>
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Search by username">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
     <div id="searchResults"></div>
 

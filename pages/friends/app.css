@@ -1,0 +1,190 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1b1b1b;
+    color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px; /* Account for fixed navbar height */
+    overflow-x: hidden;
+}
+
+/* Page title styling */
+h1 {
+    color: #f5c518;
+    margin: 20px 0;
+    font-size: 2rem;
+    text-align: center;
+}
+
+/* Subheadings styling */
+h2 {
+    color: #f5c518;
+    margin-top: 20px;
+    font-size: 1.5rem;
+}
+
+/* Button styling */
+button {
+    background: #f5c518;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    color: #1b1b1b;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button a {
+    color: #1b1b1b;
+    text-decoration: none;
+}
+
+button:hover {
+    background: #e5b417;
+}
+
+/* User button styling */
+#userButton {
+    background: #f5c518;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    color: #1b1b1b;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+#userButton:hover {
+    background: #e5b417;
+}
+
+#findFriendsContainer h2 {
+    margin-bottom: 20px;
+}
+
+/* Search form styling */
+#searchForm {
+    display: flex;
+    gap: 5px;
+}
+
+#searchInput {
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    color: #f5f5f5;
+    width: 150px;
+}
+
+#searchForm button {
+    background-color: #f5c518;
+    border: none;
+    padding: 8px 15px;
+    color: #1b1b1b;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+#searchForm button:hover {
+    background-color: #e5b417;
+}
+
+/* Container for "Find new friends" header and search form */
+#findFriendsContainer {
+    display: flex;
+    align-items: center;       /* Vertically center-aligns h2 and form */
+    justify-content: center;    /* Horizontally centers the entire content */
+    gap: 20px;                  /* Space between h2 and form */
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    margin-left: auto;          /* Centers container within the page */
+    margin-right: auto;         /* Centers container within the page */
+    text-align: center;
+}
+
+/* Adjust form styling to align nicely with h2 */
+#searchForm {
+    display: flex;
+    gap: 5px;
+    align-items: center; /* Vertically aligns the input and button within the form */
+}
+
+#searchInput {
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    color: #f5f5f5;
+    width: 100%; /* Expands input to fit container */
+}
+
+/* Friends list and search results containers */
+#friendsList,
+#searchResults,
+#friendRequests {
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Individual friend and search result item styling */
+#friendsList div,
+#searchResults div,
+#friendRequests div {
+    background-color: #222;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Friend item text styling */
+#friendsList div p,
+#searchResults div p,
+#friendRequests div p {
+    color: #f5f5f5;
+    font-size: 16px;
+}
+
+/* Friend request button styling */
+#friendRequests button {
+    margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    #searchInput {
+        width: 100px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    #friendsList, #searchResults, #friendRequests {
+        width: 100%;
+    }
+}

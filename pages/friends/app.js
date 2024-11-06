@@ -32,131 +32,114 @@ const logoutUser = async () => {
     }
 };
 
-// Load the username or set login button on page load
-window.addEventListener('DOMContentLoaded', function () {
-    updateUserButton(); // Check login state and update user button
-});
-searchForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const query = document.getElementById('searchInput').value;
+// Display friend requests
+const displayFriendRequests = async () => {
+    try {
+        const res = await axios.get('/friend-requests');
+        const friendRequests = res.data.friendRequests;
 
-  try {
-    const res = await axios.get(`/search-users?query=${query}`);
-    const users = res.data.users;
-    displaySearchResults(users);
-  } catch (error) {
-    console.error("Error searching users:", error);
-  }
-});
-  
-// Send a friend request
-const sendFriendRequest = async (recipientId) => {
-  try {
-    await axios.post('/send-friend-request', { recipientId });
-    alert("Friend request sent!");
-  } catch (error) {
-    console.error("Error sending friend request:", error);
-  }
+        friendRequestsContainer.innerHTML = '';
+        friendRequests.forEach(request => {
+            const requestElement = document.createElement('div');
+            requestElement.innerHTML = `
+                <p>${request.username}</p>
+                <p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p><p> </p>
+                <button onclick="acceptFriendRequest('${request._id}')">Accept</button>
+                <button onclick="rejectFriendRequest('${request._id}')">Reject</button>
+            `;
+            friendRequestsContainer.appendChild(requestElement);
+        });
+    } catch (error) {
+        console.error("Error displaying friend requests:", error);
+        friendRequestsContainer.innerHTML = '<div>Error loading friend requests.</div>';
+    }
 };
 
 // Accept a friend request
 const acceptFriendRequest = async (requesterId) => {
-  try {
-    await axios.post('/accept-friend-request', { requesterId });
-    alert("Friend request accepted!");
-    displayFriendRequests(); // Refresh friend requests list
-  } catch (error) {
-    console.error("Error accepting friend request:", error);
-  }
+    try {
+        await axios.post('/accept-friend-request', { requesterId });
+        alert("Friend request accepted!");
+        displayFriendRequests(); // Refresh friend requests list
+    } catch (error) {
+        console.error("Error accepting friend request:", error);
+    }
 };
 
 // Reject a friend request
 const rejectFriendRequest = async (requesterId) => {
-  try {
-    await axios.post('/reject-friend-request', { requesterId });
-    alert("Friend request rejected!");
-    displayFriendRequests(); // Refresh friend requests list
-  } catch (error) {
-    console.error("Error rejecting friend request:", error);
-  }
+    try {
+        await axios.post('/reject-friend-request', { requesterId });
+        alert("Friend request rejected!");
+        displayFriendRequests(); // Refresh friend requests list
+    } catch (error) {
+        console.error("Error rejecting friend request:", error);
+    }
 };
-
-// Display friend requests
-const displayFriendRequests = async () => {
-  try {
-    const res = await axios.get('/friend-requests');
-    const friendRequests = res.data.friendRequests;
-
-    friendRequestsContainer.innerHTML = '';
-    friendRequests.forEach(request => {
-      const requestElement = document.createElement('div');
-      requestElement.innerHTML = `
-        <p>${request.username}</p>
-        <button onclick="acceptFriendRequest('${request._id}')">Accept</button>
-        <button onclick="rejectFriendRequest('${request._id}')">Reject</button>
-      `;
-      friendRequestsContainer.appendChild(requestElement);
-    });
-  } catch (error) {
-    console.error("Error displaying friend requests:", error);
-  }
-};
-
-// Search for users by username
-searchForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const query = document.getElementById('searchInput').value;
-
-  try {
-    const res = await axios.get(`/search-users?query=${query}`);
-    const users = res.data.users;
-    displaySearchResults(users);
-  } catch (error) {
-    console.error("Error searching users:", error);
-  }
-});
 
 // Display search results
 const displaySearchResults = (users) => {
-  searchResultsContainer.innerHTML = ''; // Clear previous results
-  users.forEach(user => {
-    const userElement = document.createElement('div');
-    userElement.innerHTML = `
-      <p>${user.username}</p>
-      <button onclick="sendFriendRequest('${user._id}')">Send Friend Request</button>
-    `;
-    searchResultsContainer.appendChild(userElement);
-  });
+    searchResultsContainer.innerHTML = ''; // Clear previous results
+    users.forEach(user => {
+        const userElement = document.createElement('div');
+        userElement.innerHTML = `
+            <p>${user.username}</p>
+            <button onclick="sendFriendRequest('${user._id}')">Send Friend Request</button>
+        `;
+        searchResultsContainer.appendChild(userElement);
+    });
 };
 
-// Function to fetch user's friends' usernames
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-      const response = await axios.get('/user-details');
-      const friendsUsernames = response.data.friendsUsernames;
+// Send a friend request
+const sendFriendRequest = async (recipientId) => {
+    try {
+        await axios.post('/send-friend-request', { recipientId });
+        alert("Friend request sent!");
+        displayFriendRequests(); // Refresh friend requests list if needed
+    } catch (error) {
+        console.error("Error sending friend request:", error);
+    }
+};
 
-      const friendsListDiv = document.getElementById('friendsList');
-      if (friendsUsernames.length > 0) {
-          // Use map to include "See common movies" button for each friend
-          friendsListDiv.innerHTML = friendsUsernames.map(username => `
-            <div>
-              ${username}
-              <button onclick="window.location.href='http://localhost:3000/friends/${encodeURIComponent(username)}'">
-                See common movies
-              </button>
-            </div>
-          `).join('');
-      } else {
-          friendsListDiv.innerHTML = '<div>No friends added yet.</div>';
-      }
-  } catch (error) {
-      console.error('Error fetching friends usernames:', error);
-      document.getElementById('friendsList').innerHTML = '<div>Error fetching friends.</div>';
-  }
+// Handle user search
+searchForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = document.getElementById('searchInput').value;
+
+    try {
+        const res = await axios.get(`/search-users?query=${query}`);
+        const users = res.data.users;
+        displaySearchResults(users);
+    } catch (error) {
+        console.error("Error searching users:", error);
+    }
 });
 
-window.addEventListener('DOMContentLoaded', function () {
-  updateUserButton();
-  displayFriends();
-  displayFriendRequests();
+// Fetch and display user's friends list
+const displayFriends = async () => {
+    try {
+        const response = await axios.get('/user-details');
+        const friendsUsernames = response.data.friendsUsernames;
+
+        friendsListContainer.innerHTML = friendsUsernames.length > 0 
+            ? friendsUsernames.map(username => `
+                <div>
+                    ${username}
+                    <button onclick="window.location.href='http://localhost:3000/friends/${encodeURIComponent(username)}'">
+                        See common movies
+                    </button>
+                </div>
+            `).join('')
+            : '<div>No friends added yet.</div>';
+    } catch (error) {
+        console.error('Error fetching friends usernames:', error);
+        friendsListContainer.innerHTML = '<div>Error fetching friends.</div>';
+    }
+};
+
+// Initial setup on page load
+window.addEventListener('DOMContentLoaded', async function () {
+    await updateUserButton(); // Check login state and update user button
+    await displayFriends();   // Display friends list
+    await displayFriendRequests(); // Display friend requests
 });

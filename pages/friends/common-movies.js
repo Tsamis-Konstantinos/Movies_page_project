@@ -25,11 +25,11 @@
                      // Display movie information
                      const movieDiv = document.createElement('div');
                      movieDiv.innerHTML = `
-                         <div>
-                             <img src="${movie.Poster}" alt="${movie.Title}">
-                             <p>${movie.Title} (${movie.Year})</p>
-                             <p>${movie.Plot}</p>
-                         </div>
+                     <div id="container">
+                     <img src="${movie.Poster}" alt="${movie.Title}">
+                     <p class="title">${movie.Title} (${movie.Year})</p>
+                     <p class="plot">${movie.Plot}</p>
+                     </div>
                      `;
                      commonMoviesListDiv.appendChild(movieDiv);
                  } catch (omdbError) {
