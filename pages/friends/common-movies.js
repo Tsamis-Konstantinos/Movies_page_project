@@ -1,7 +1,6 @@
  // Variable to store common movies IDs
  let moviesArray = [];
         
- // OMDB API key (replace with your actual API key)
  const apiKey = 'acf3c869';
 
  // Fetch and display common movies
@@ -11,18 +10,15 @@
      try {
          const res = await axios.get(`/friends/${username}/common-movies`);
          const commonMovies = res.data.commonMovies;
-         moviesArray = commonMovies; // Store in moviesArray
+         moviesArray = commonMovies; 
 
          const commonMoviesListDiv = document.getElementById('commonMoviesList');
          if (moviesArray.length > 0) {
-             commonMoviesListDiv.innerHTML = ''; // Clear the div
+             commonMoviesListDiv.innerHTML = ''; 
              for (const movieID of moviesArray) {
-                 // Fetch details for each movie from OMDB API
                  try {
                      const omdbRes = await axios.get(`https://www.omdbapi.com/?i=${movieID}&apikey=${apiKey}`);
                      const movie = omdbRes.data;
-
-                     // Display movie information
                      const movieDiv = document.createElement('div');
                      movieDiv.innerHTML = `
                      <div id="container">

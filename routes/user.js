@@ -123,8 +123,8 @@ router.get('/search-users', async (req, res) => {
   try {
     const users = await User.find({
       username: { $regex: query, $options: 'i' }, // Case-insensitive search
-      _id: { $ne: req.session.userId } // Exclude the current user
-    }).select('username'); // Only return the username
+      _id: { $ne: req.session.userId } 
+    }).select('username'); 
 
     res.status(200).json({ users });
   } catch (err) {

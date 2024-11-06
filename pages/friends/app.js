@@ -9,13 +9,11 @@ const updateUserButton = async () => {
     try {
         const res = await axios.get('/get-username'); 
         if (res.data.username) {
-            // User is logged in, display username and ↪EXIT symbol
             userButton.innerHTML = `${res.data.username}  ↪EXIT`;
             userButton.onclick = logoutUser; 
         } else {
-            // User is not logged in, display "Login"
             userButton.innerHTML =  "Login";
-            userButton.onclick = () => window.location.href = '/login'; // Redirect to login page
+            userButton.onclick = () => window.location.href = '/login'; 
         }
     } catch (error) {
         console.error("Error fetching username:", error);
@@ -25,8 +23,8 @@ const updateUserButton = async () => {
 // Function to log the user out
 const logoutUser = async () => {
     try {
-        await axios.post('/logout'); // Make sure your server has this route implemented
-        window.location.reload(); // Reload the page to reflect the logged-out state
+        await axios.post('/logout'); 
+        window.location.reload(); 
     } catch (error) {
         console.error("Error logging out:", error);
     }
@@ -79,7 +77,7 @@ const rejectFriendRequest = async (requesterId) => {
 
 // Display search results
 const displaySearchResults = (users) => {
-    searchResultsContainer.innerHTML = ''; // Clear previous results
+    searchResultsContainer.innerHTML = ''; 
     users.forEach(user => {
         const userElement = document.createElement('div');
         userElement.innerHTML = `
@@ -95,7 +93,7 @@ const sendFriendRequest = async (recipientId) => {
     try {
         await axios.post('/send-friend-request', { recipientId });
         alert("Friend request sent!");
-        displayFriendRequests(); // Refresh friend requests list if needed
+        displayFriendRequests();
     } catch (error) {
         console.error("Error sending friend request:", error);
     }
@@ -139,7 +137,7 @@ const displayFriends = async () => {
 
 // Initial setup on page load
 window.addEventListener('DOMContentLoaded', async function () {
-    await updateUserButton(); // Check login state and update user button
-    await displayFriends();   // Display friends list
-    await displayFriendRequests(); // Display friend requests
+    await updateUserButton(); 
+    await displayFriends();   
+    await displayFriendRequests(); 
 });

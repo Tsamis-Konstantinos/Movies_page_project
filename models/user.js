@@ -12,10 +12,8 @@ const userSchema = new mongoose.Schema({
 
 // Pre-save hook to populate friendsUsernames
 userSchema.pre('save', async function (next) {
-  // Only update friendsUsernames if friends field has changed
   if (this.isModified('friends')) {
     try {
-      // Fetch the usernames of all users in the friends array
       const friendsData = await mongoose.model('User').find({ _id: { $in: this.friends } }, 'username');
       this.friendsUsernames = friendsData.map(friend => friend.username);
     } catch (err) {

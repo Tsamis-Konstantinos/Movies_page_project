@@ -19,7 +19,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/project_1', {
 
 // Session Configuration
 app.use(session({
-  secret: 'yourSecretKey', // Replace with a secure key
+  secret: '0123456789',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false } // Set to true if using HTTPS
@@ -40,7 +40,6 @@ app.get('/friends/:username', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'friends', 'common-movies.html'));
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`Server listening at port: ${port}`);
 });

@@ -9,11 +9,9 @@ const updateUserButton = async () => {
     try {
         const res = await axios.get('/get-username'); 
         if (res.data.username) {
-            // User is logged in, display username and ↪EXIT symbol
             userButton.innerHTML = `${res.data.username}  ↪EXIT;`
             userButton.onclick = logoutUser; 
         } else {
-            // User is not logged in, display "Login"
             userButton.innerHTML = "Login";
             userButton.onclick = () => window.location.href = '/login'; // Redirect to login page
         }
@@ -51,19 +49,18 @@ const updateFriendsButton = async () => {
 // Function to log the user out
 const logoutUser = async () => {
     try {
-        await axios.post('/logout'); // Make sure your server has this route implemented
-        window.location.reload(); // Reload the page to reflect the logged-out state
+        await axios.post('/logout'); 
+        window.location.reload(); 
     } catch (error) {
         console.error("Error logging out:", error);
     }
 };
 
-// Load the username or set login button on page load
 window.addEventListener('DOMContentLoaded', function () {
-    updateUserButton(); // Check login state and update user button
+    updateUserButton(); 
     updateLibraryButton();
     updateFriendsButton();
-    searchMovies('2024'); // Perform an initial search for movies
+    searchMovies('2024');
 });
 
 form.addEventListener('submit', function (e) {
@@ -91,7 +88,6 @@ const searchMovies = async (searchTerm) => {
     try {
         const res = await axios.get(url, config);
         
-        // Check if search results exist
         if (res.data.Search && res.data.Search.length > 0) {
             makeImages(res.data.Search);
         } else {
@@ -105,7 +101,6 @@ const searchMovies = async (searchTerm) => {
 
 // Function to create movie divs with hover plot display
 const makeImages = async (movies) => {
-    // Clear previous movie containers
     document.querySelectorAll('.movie-container').forEach(div => div.remove());
 
     for (let result of movies) {
@@ -127,24 +122,18 @@ const makeImages = async (movies) => {
                 try {
                     const res = await axios.get('/get-username');
                     if (res.data.username) {
-                        // Check if the movie is already saved in the user's favorites
                         const userRes = await axios.get('/get-user-movies');
                         const isMovieLiked = userRes.data.movies.includes(movieImdbId);
-
-                        // Set the button text and functionality based on the movie's like status
                         movieButton.textContent = isMovieLiked ? 'Liked' : 'Like';
                         movieButton.onclick = async () => {
                             try {
                                 if (isMovieLiked) {
-                                    // Remove movie ID from user's favorites
                                 await axios.post('/remove-movie', { movieId: movieImdbId });
-                                    movieButton.textContent = 'Like'; // Toggle back to "Like"
+                                    movieButton.textContent = 'Like'; 
                                 } else {
-                                    // Add movie ID to user's favorites
                                     await axios.post('/save-movie', { movieId: movieImdbId });
-                                    movieButton.textContent = 'Liked'; // Toggle to "Liked"
+                                    movieButton.textContent = 'Liked';
                                 }
-                                // Refresh the button state after toggling
                                 setButtonState();
                             } catch (error) {
                                 console.error("Error toggling movie like state:", error);
@@ -159,20 +148,15 @@ const makeImages = async (movies) => {
                 }
             };
 
-            // Set initial button state
             setButtonState();
-
-            // Append elements to the movie container div
             div.appendChild(img);
             div.appendChild(titleText);
             div.appendChild(movieButton);
 
-            // Create and append plot div (hidden initially)
             const plotDiv = document.createElement('div');
             plotDiv.classList.add('plot');
             div.appendChild(plotDiv);
 
-            // Fetch and display plot on hover
             div.addEventListener('mouseenter', async () => {
                 plotDiv.textContent = await fetchPlot(result.imdbID);
             });
@@ -181,7 +165,6 @@ const makeImages = async (movies) => {
                 plotDiv.textContent = '';
             });
 
-            // Add movie container div to the document body
             document.body.append(div);
         }
     }

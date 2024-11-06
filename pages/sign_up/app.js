@@ -1,5 +1,5 @@
 async function validateForm(event) {
-    event.preventDefault(); // Prevent the form from submitting immediately
+    event.preventDefault(); 
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -33,10 +33,10 @@ async function validateForm(event) {
         // Submit the form data via POST request to the server
         const response = await axios.post('/signup', userData);
         // Redirect to login if successful
-        window.location.href = response.data.redirectUrl; // Adjust based on your response structure
+        window.location.href = response.data.redirectUrl; // Adjust based on response structure
     } catch (error) {
         if (error.response) {
-            alert(error.response.data); // Display server error message
+            alert(error.response.data);
         } else {
             alert("An error occurred. Please try again.");
         }

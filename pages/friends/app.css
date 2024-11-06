@@ -105,14 +105,14 @@ button:hover {
 /* Container for "Find new friends" header and search form */
 #findFriendsContainer {
     display: flex;
-    align-items: center;       /* Vertically center-aligns h2 and form */
-    justify-content: center;    /* Horizontally centers the entire content */
-    gap: 20px;                  /* Space between h2 and form */
+    align-items: center;       
+    justify-content: center;    
+    gap: 20px;                  
     width: 100%;
     max-width: 600px;
     margin-top: 20px;
-    margin-left: auto;          /* Centers container within the page */
-    margin-right: auto;         /* Centers container within the page */
+    margin-left: auto;          
+    margin-right: auto;        
     text-align: center;
 }
 
@@ -120,7 +120,7 @@ button:hover {
 #searchForm {
     display: flex;
     gap: 5px;
-    align-items: center; /* Vertically aligns the input and button within the form */
+    align-items: center; 
 }
 
 #searchInput {
@@ -129,7 +129,7 @@ button:hover {
     border-radius: 4px;
     background-color: #333;
     color: #f5f5f5;
-    width: 100%; /* Expands input to fit container */
+    width: 100%; 
 }
 
 /* Friends list and search results containers */
