@@ -45,7 +45,7 @@ router.post('/login-process', async (req, res) => {
 
     req.session.userId = user._id;
     req.session.username = user.username;
-    res.redirect('/main_page');
+    res.redirect('/');
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');

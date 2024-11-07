@@ -28,7 +28,15 @@ app.use(session({
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'pages'))); // Serve static files from pages
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'pages')));
+app.use('/main_page', express.static(path.join(__dirname, 'pages', 'main_page')));
+
+// Redirect root URL to main page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'main_page', 'index.html'));
+});
 
 // Routes
 app.use('/', require('./routes/auth'));

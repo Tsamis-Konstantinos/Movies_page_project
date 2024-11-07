@@ -12,11 +12,6 @@ Mongoose version: 8.7.1
 OpenSSL version: 3.0.2
 
 
-Homepage:
-
-http://localhost:3000/main_page/
-
-
 Sample users:
 
 username: test_user_1
