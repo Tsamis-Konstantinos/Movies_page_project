@@ -48,6 +48,10 @@ app.get('/friends/:username', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'friends', 'common-movies.html'));
 });
 
+app.all('*', (req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'pages', '404', '404.html'));
+});
+
 app.listen(port, () => {
   console.log(`Server listening at port: ${port}`);
 });
