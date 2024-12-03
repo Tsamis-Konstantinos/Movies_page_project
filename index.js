@@ -29,13 +29,12 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files
+// Serve all static files from the 'pages' directory
 app.use(express.static(path.join(__dirname, 'pages')));
-app.use('/main_page', express.static(path.join(__dirname, 'pages', 'main_page')));
 
-// Redirect root URL to main page
+// Redirect root URL to home page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages', 'main_page', 'index.html'));
+  res.sendFile(path.join(__dirname, 'pages', 'home_page', 'home_page.html'));
 });
 
 // Routes
@@ -48,6 +47,17 @@ app.get('/friends/:username', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'friends', 'common-movies.html'));
 });
 
+// Serve library.html for /library route
+app.get('/library', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'library', 'library.html'));
+});
+
+// Serve friends.html for /friends route
+app.get('/friends', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'friends', 'friends.html'));
+});
+
+// 404 Page for undefined routes
 app.all('*', (req, res) => {
   res.status(404).sendFile(path.join(__dirname, 'pages', '404', '404.html'));
 });
