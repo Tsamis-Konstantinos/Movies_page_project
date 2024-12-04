@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const User = require('./models/User');
+
+// Update model import path
+const User = require('./src/models/User');
 
 const app = express();
 const port = 3000;
@@ -29,37 +31,37 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve all static files from the 'pages' directory
-app.use(express.static(path.join(__dirname, 'pages')));
+// Serve all static files from 'src/pages' directory
+app.use(express.static(path.join(__dirname, 'src', 'pages')));
 
 // Redirect root URL to home page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages', 'home_page', 'home_page.html'));
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'home_page', 'home_page.html'));
 });
 
 // Routes
-app.use('/', require('./routes/auth'));
-app.use('/', require('./routes/movies'));
-app.use('/', require('./routes/user'));
+app.use('/', require('./src/routes/auth'));
+app.use('/', require('./src/routes/movies'));
+app.use('/', require('./src/routes/user'));
 
 // Serve common-movies.html for /friends/:username routes
 app.get('/friends/:username', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages', 'friends', 'common-movies.html'));
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'friends', 'common-movies.html'));
 });
 
 // Serve library.html for /library route
 app.get('/library', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages', 'library', 'library.html'));
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'library', 'library.html'));
 });
 
 // Serve friends.html for /friends route
 app.get('/friends', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pages', 'friends', 'friends.html'));
+  res.sendFile(path.join(__dirname, 'src', 'pages', 'friends', 'friends.html'));
 });
 
 // 404 Page for undefined routes
 app.all('*', (req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'pages', '404', '404.html'));
+  res.status(404).sendFile(path.join(__dirname, 'src', 'pages', '404', '404.html'));
 });
 
 app.listen(port, () => {
