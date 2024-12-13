@@ -123,7 +123,7 @@ const displayFriends = async () => {
             ? friendsUsernames.map(username => `
                 <div>
                     ${username}
-                    <button onclick="window.location.href='http://localhost:3000/friends/${encodeURIComponent(username)}'">
+                    <button onclick="window.location.href='/friends/${encodeURIComponent(username)}'">
                         See common movies
                     </button>
                 </div>
