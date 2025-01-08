@@ -60,7 +60,7 @@ window.addEventListener('DOMContentLoaded', function () {
     updateUserButton(); 
     updateLibraryButton();
     updateFriendsButton();
-    searchMovies('2024');
+    searchMovies('2025');
 });
 
 form.addEventListener('submit', function (e) {
