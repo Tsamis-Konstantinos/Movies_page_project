@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Serve the sign-up page
 router.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, '../pages', 'sign_up', 'sign_up.html'));
+  res.sendFile(path.join(__dirname, '../views', 'sign_up', 'sign_up.html'));
 });
 
 // Handle sign-up form submission
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
 
 // Serve the login page
 router.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '../pages', 'login', 'login.html'));
+  res.sendFile(path.join(__dirname, '../views', 'login', 'login.html'));
 });
 
 // Process login form submission
