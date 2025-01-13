@@ -43,7 +43,6 @@ async function validateForm(event) {
     }
 }
 
-
 function togglePasswordVisibility() {
     const passwordField = document.getElementById('password');
     const confirmPasswordField = document.getElementById('confirm_password');

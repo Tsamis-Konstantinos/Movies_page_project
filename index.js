@@ -62,6 +62,10 @@ app.get('/friends', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'views', 'friends', 'friends.html'));
 });
 
+app.get('/sign_up/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'views', 'sign_up', 'sign_up.html'));
+});
+
 // 404 Page for undefined routes
 app.all('*', (req, res) => {
   res.status(404).sendFile(path.join(__dirname, 'src', 'views', '404', '404.html'));
