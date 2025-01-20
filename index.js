@@ -31,7 +31,7 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files from 'src/public' for assets (e.g., JS, CSS)
+// Serve static files from 'src/public' for assets
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 // Serve static HTML files from 'src/views'
