@@ -2,7 +2,8 @@ const form = document.querySelector('#searchForm');
 const userButton = document.getElementById('userButton');
 const libraryButton = document.getElementById('libraryButton');
 const friendsButton = document.getElementById('friendsButton');
-const apiKey = 'acf3c869';
+
+import { apiKey } from './config.js';
 
 // Function to fetch the username and update the button display and functionality
 const updateUserButton = async () => {
