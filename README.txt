@@ -11,6 +11,14 @@ Mongosh version: 2.3.2
 Mongoose version: 8.7.1
 OpenSSL version: 3.0.2
 
+Instructions:
+
+a) Extract the zip file on your desired location
+b) Install the necessary software in accordance to the "Made in" section.
+c) Create the following directory: src/public/js/config.js and type in it: export const apiKey = 'yourKey';
+d) Replace yourKey with a free key from https://www.omdbapi.com/apikey.aspx
+e) Make sure mongod is active
+f) Go to the root directory, using the terminal, and type nodemon index.js
 
 Sample users:
 
